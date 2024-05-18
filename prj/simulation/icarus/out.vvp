@@ -1,0 +1,66 @@
+#! /usr/bin/vvp
+:ivl_version "11.0 (stable)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/system.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_sys.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/vhdl_textio.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/v2005_math.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/va_math.vpi";
+:vpi_module "/usr/lib/x86_64-linux-gnu/ivl/v2009.vpi";
+S_0x55b52c8c5000 .scope package, "$unit" "$unit" 2 1;
+ .timescale 0 0;
+S_0x55b52c8c5190 .scope module, "top" "top" 3 3;
+ .timescale 0 0;
+o0x7fdb9b937018 .functor BUFZ 1, C4<z>; HiZ drive
+v0x55b52c8d5a40_0 .net "clk", 0 0, o0x7fdb9b937018;  0 drivers
+o0x7fdb9b937078 .functor BUFZ 1, C4<z>; HiZ drive
+v0x55b52c8d5b00_0 .net "jump_flag", 0 0, o0x7fdb9b937078;  0 drivers
+v0x55b52c8d5ba0_0 .net "pc_out", 31 0, v0x55b52c8d57b0_0;  1 drivers
+o0x7fdb9b9370d8 .functor BUFZ 1, C4<z>; HiZ drive
+v0x55b52c8d5c70_0 .net "rst", 0 0, o0x7fdb9b9370d8;  0 drivers
+S_0x55b52c8b15b0 .scope module, "u_pc_reg" "pc_reg" 3 7, 4 1 0, S_0x55b52c8c5190;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "clk";
+    .port_info 1 /INPUT 1 "rst";
+    .port_info 2 /INPUT 1 "jump_flag";
+    .port_info 3 /INPUT 32 "jump_addr";
+    .port_info 4 /OUTPUT 32 "pc_out";
+v0x55b52c89b7e0_0 .net "clk", 0 0, o0x7fdb9b937018;  alias, 0 drivers
+L_0x7fdb9b8ee018 .functor BUFT 1, C4<0000000000000000000000000000000z>, C4<0>, C4<0>, C4<0>;
+v0x55b52c8d5630_0 .net "jump_addr", 31 0, L_0x7fdb9b8ee018;  1 drivers
+v0x55b52c8d5710_0 .net "jump_flag", 0 0, o0x7fdb9b937078;  alias, 0 drivers
+v0x55b52c8d57b0_0 .var "pc_out", 31 0;
+v0x55b52c8d5890_0 .net "rst", 0 0, o0x7fdb9b9370d8;  alias, 0 drivers
+E_0x55b52c88a6d0 .event posedge, v0x55b52c89b7e0_0;
+    .scope S_0x55b52c8b15b0;
+T_0 ;
+    %wait E_0x55b52c88a6d0;
+    %load/vec4 v0x55b52c8d5890_0;
+    %cmpi/e 1, 0, 1;
+    %jmp/0xz  T_0.0, 4;
+    %pushi/vec4 0, 0, 32;
+    %assign/vec4 v0x55b52c8d57b0_0, 0;
+    %jmp T_0.1;
+T_0.0 ;
+    %load/vec4 v0x55b52c8d5710_0;
+    %cmpi/e 1, 0, 1;
+    %jmp/0xz  T_0.2, 4;
+    %load/vec4 v0x55b52c8d5630_0;
+    %assign/vec4 v0x55b52c8d57b0_0, 0;
+    %jmp T_0.3;
+T_0.2 ;
+    %load/vec4 v0x55b52c8d57b0_0;
+    %addi 4, 0, 32;
+    %assign/vec4 v0x55b52c8d57b0_0, 0;
+T_0.3 ;
+T_0.1 ;
+    %jmp T_0;
+    .thread T_0;
+# The file index is used to find the file name in the following table.
+:file_names 5;
+    "N/A";
+    "<interactive>";
+    "-";
+    "/home/joknem/workspace/joknem_rv32/user/sim/top.v";
+    "./../src/new_pc_reg.v";
