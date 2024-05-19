@@ -36,6 +36,8 @@ module top();
     //regs module
     wire [`MEM_ADDR_BUS] regs_reg1_rdata_o;
     wire [`MEM_ADDR_BUS] regs_reg2_rdata_o;
+    wire [`MEM_BUS] regs_op1_o;
+    wire [`MEM_BUS] regs_op2_o;
 
     //FIXME: this is a test
     reg [`MEM_BUS] ex_wdata_o;
@@ -46,7 +48,7 @@ module top();
     initial begin:mem_init
         integer i;
         for (i = 0; i < 32; i = i + 1) begin
-            regs_inst.regs[i] = i; // 初始化
+            regs_inst.regs[i] = `ZERO_WORD; // 初始化
             $display("x%-2d:0x%h", i, regs_inst.regs[i]);
         end
     end

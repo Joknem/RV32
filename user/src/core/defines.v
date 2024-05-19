@@ -9,7 +9,7 @@
 `define FUNCT7_BUS 6:0
 `define FUNCT3_BUS 2:0
 
-
+//define the size of the memory and register file
 `define REG_NUM 32
 `define MEM_SIZE 128
 

@@ -9,7 +9,7 @@ module rom(
     reg     [`BYTE_BUS]                 _rom                        [`MEM_SIZE-1:0] ;                               
     reg     [7:0]                       i                                           ;                               
     initial begin
-        $readmemh("/home/joknem/workspace/joknem_rv32/user/data/inst.data", _rom, 0, 127);
+        $readmemh("/home/joknem/workspace/joknem_rv32/user/data/test.mem", _rom, 0, 127);
     end
     always @(*)begin
         if(rst == `RST)begin

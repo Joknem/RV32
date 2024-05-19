@@ -4,5 +4,6 @@
     "accessibility.signals.lineHasError": {
         "sound": "off",
         "announcement": "off"
-    }
+    },
+    "python.REPL.enableREPLSmartSend": false
 }
