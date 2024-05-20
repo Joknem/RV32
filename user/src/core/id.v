@@ -19,6 +19,8 @@ module id(
     
 
     //to id_ex
+    output  reg     [`REG_BUS]          reg1_rdata_o                                ,                   
+    output  reg     [`REG_BUS]          reg2_rdata_o                                ,                   
     output  reg     [`MEM_ADDR_BUS]     op1_o                                       ,                   
     output  reg     [`MEM_ADDR_BUS]     op2_o                                       ,                   
     output  reg                         reg_we_o                                    ,                   
@@ -40,6 +42,8 @@ module id(
         inst_addr_o = inst_addr_i;
         reg1_raddr_o = rs1;
         reg2_raddr_o = rs2;
+        reg1_rdata_o = reg1_rdata_i;
+        reg2_rdata_o = reg2_rdata_i;
         op1_o = `ZERO_WORD;
         op2_o = `ZERO_WORD;
 
@@ -64,7 +68,7 @@ module id(
             end
             `INST_TYPE_R:begin
                 case(funct3)
-                    `INST_ADD_SUB, `INST_SLL, `INST_SLT, `INST_SLTU, `INST_XOR, `INST_SR, `INST_OR, `INST_AND: begin
+                    `INST_ADD, `INST_SLL, `INST_SLT, `INST_SLTU, `INST_XOR, `INST_SR, `INST_OR, `INST_AND: begin
                             reg_we_o = `WRITE_DISABLE;
                             reg_waddr_o = rd;
                             reg1_raddr_o = rs1;
@@ -85,7 +89,7 @@ module id(
                     `INST_LB, `INST_LH, `INST_LW, `INST_LBU, `INST_LHU: begin
                         reg1_raddr_o = rs1;
                         reg2_raddr_o = `ZERO_REG;
-                        reg_we_o = `WRITE_DISABLE;
+                        reg_we_o = `WRITE_ENABLE;
                         reg_waddr_o = rd;
                         op1_o = reg1_rdata_i;
                         op2_o = {{20{inst_i[31]}}, inst_i[31:20]};

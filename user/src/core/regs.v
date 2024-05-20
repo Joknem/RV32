@@ -20,12 +20,19 @@ module regs(
     input   wire    [`REG_ADDR_BUS]     raddr2_i                                    ,           // 读寄存器2地址
 
     // to id
-    output  reg     [`REG_BUS]          rdata2_o                                                // 读寄存器2数据
-
+    output  reg     [`REG_BUS]          rdata2_o                                    ,           // 读寄存器2数据
+    output  wire    [`REG_BUS]          sp                                          ,                   
+    output  wire    [`REG_BUS]          s0                                          ,                   
+    output  wire    [`REG_BUS]          a5                                          ,                   
+    output  wire    [`REG_BUS]          a4                                                              
     );
 
     reg     [`REG_BUS]                  regs                        [0:`REG_NUM - 1];                               
     
+    assign sp = regs[2];
+    assign s0 = regs[8];
+    assign a5 = regs[15];
+    assign a4 = regs[14];
 
     // write regs
     always @ (posedge clk) begin

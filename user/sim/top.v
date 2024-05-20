@@ -36,6 +36,8 @@ module top();
     wire [`REG_ADDR_BUS] id_reg_waddr_o;
     wire [`MEM_ADDR_BUS] id_inst_addr_o;
     wire [`MEM_BUS] id_inst_o;
+    wire [`REG_BUS] id_reg1_rdata_o;
+    wire [`REG_BUS] id_reg2_rdata_o;
 
     //regs module
     wire [`MEM_ADDR_BUS] regs_reg1_rdata_o;
@@ -50,6 +52,8 @@ module top();
     wire [`MEM_ADDR_BUS] idex_op2_o;
     wire idex_reg_we_o;
     wire [`REG_ADDR_BUS] idex_reg_waddr_o;
+    wire [`REG_BUS] idex_reg1_rdata_o;
+    wire [`REG_BUS] idex_reg2_rdata_o;
 
     //FIXME: this is a test
 
@@ -61,15 +65,17 @@ module top();
     wire [`MEM_ADDR_BUS] ex_mem_raddr_o;
     wire [`MEM_ADDR_BUS] ex_mem_waddr_o;
     wire [`MEM_BUS] ex_mem_wdata_o;
+    wire [`REG_BUS] sp;
+    wire [`REG_BUS] s0;
+    wire [`REG_BUS] a5;
+    wire [`REG_BUS] a4;
 
     always #10 clk = ~clk;
-
 
     initial begin:mem_init
         integer i;
         for (i = 0; i < 32; i = i + 1) begin
             regs_inst.regs[i] = `ZERO_WORD; // 初始化
-            $display("x%-2d:0x%h", i, regs_inst.regs[i]);
         end
     end
 
@@ -139,7 +145,11 @@ module top();
         .waddr_i(ex_reg_waddr_o),
         .wdata_i(ex_reg_wdata_o),
         .rdata1_o(regs_reg1_rdata_o),
-        .rdata2_o(regs_reg2_rdata_o)
+        .rdata2_o(regs_reg2_rdata_o),
+        .sp(sp),
+        .s0(s0),
+        .a5(a5),
+        .a4(a4)
     );
 
     id id_inst(
@@ -155,7 +165,9 @@ module top();
         .reg_we_o(id_we_o),
         .reg_waddr_o(id_reg_waddr_o),
         .inst_addr_o(id_inst_addr_o),
-        .inst_o(id_inst_o)
+        .inst_o(id_inst_o),
+        .reg1_rdata_o(id_reg1_rdata_o),
+        .reg2_rdata_o(id_reg2_rdata_o)
     );
 
     id_ex id_ex_inst(
@@ -167,7 +179,11 @@ module top();
         .reg_waddr_i(id_reg_waddr_o),
         .inst_addr_i(id_inst_addr_o),
         .inst_i(id_inst_o),
+        .reg1_rdata_i(id_reg1_rdata_o),
+        .reg2_rdata_i(id_reg2_rdata_o),
         .hold_flag_i(hold_flag_i),
+        .reg1_rdata_o(idex_reg1_rdata_o),
+        .reg2_rdata_o(idex_reg2_rdata_o),
         .inst_addr_o(idex_inst_addr_o),
         .inst_o(idex_inst_o),
         .op1_o(idex_op1_o),
@@ -185,7 +201,9 @@ module top();
         .inst_i(idex_inst_o),
         .reg_we_i(idex_reg_we_o),
         .reg_waddr_i(idex_reg_waddr_o),
-        // .mem_data_i(),
+        .reg1_rdata_i(idex_reg1_rdata_o),
+        .reg2_rdata_i(idex_reg2_rdata_o),
+        .mem_data_i(32'h0),
         .reg_we_o(ex_reg_we_o),
         .reg_waddr_o(ex_reg_waddr_o),
         .reg_wdata_o(ex_reg_wdata_o),
