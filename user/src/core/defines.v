@@ -7,6 +7,7 @@
 `define REG_BUS 31:0
 `define BYTE_BUS 7:0
 `define FUNCT7_BUS 6:0
+`define OPCODE_BUS 6:0
 `define FUNCT3_BUS 2:0
 
 //define the size of the memory and register file
@@ -24,10 +25,12 @@
 
 `define ZERO_WORD 32'h0
 `define ZERO_REG 5'b00000
+`define PC_RST_ADDR 32'h0
 
 `define HOLD_NONE 3'b000
 `define HOLD_PC 3'b001
 `define HOLD_IF 3'b010
+`define HOLD_ID 3'b011
 
 
 `define INST_NOP 32'h00000013
@@ -67,3 +70,26 @@
 `define INST_SR     3'b101
 `define INST_OR     3'b110
 `define INST_AND    3'b111
+
+// J type inst
+`define INST_JAL    7'b1101111
+`define INST_JALR   7'b1100111
+
+`define INST_LUI    7'b0110111
+`define INST_AUIPC  7'b0010111
+`define INST_MRET   32'h30200073
+`define INST_RET    32'h00008067
+
+`define INST_FENCE  7'b0001111
+`define INST_NOP_OP  7'b00000001
+`define INST_ECALL  32'h73
+`define INST_EBREAK 32'h00100073
+
+// J type inst
+`define INST_TYPE_B 7'b1100011
+`define INST_BEQ    3'b000
+`define INST_BNE    3'b001
+`define INST_BLT    3'b100
+`define INST_BGE    3'b101
+`define INST_BLTU   3'b110
+`define INST_BGEU   3'b111

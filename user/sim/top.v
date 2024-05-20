@@ -7,6 +7,8 @@
 `include "../src/peripherals/rom.v"
 `include "../src/core/regs.v"
 `include "../src/core/id.v"
+`include "../src/core/id_ex.v"
+`include "../src/core/ex.v"
 
 
 module top();
@@ -32,6 +34,8 @@ module top();
     wire [`MEM_ADDR_BUS] id_op1_o;
     wire [`MEM_ADDR_BUS] id_op2_o;
     wire [`REG_ADDR_BUS] id_reg_waddr_o;
+    wire [`MEM_ADDR_BUS] id_inst_addr_o;
+    wire [`MEM_BUS] id_inst_o;
 
     //regs module
     wire [`MEM_ADDR_BUS] regs_reg1_rdata_o;
@@ -39,8 +43,24 @@ module top();
     wire [`MEM_BUS] regs_op1_o;
     wire [`MEM_BUS] regs_op2_o;
 
+    //id_ex module
+    wire [`MEM_ADDR_BUS] idex_inst_addr_o;
+    wire [`MEM_BUS] idex_inst_o;
+    wire [`MEM_ADDR_BUS] idex_op1_o;
+    wire [`MEM_ADDR_BUS] idex_op2_o;
+    wire idex_reg_we_o;
+    wire [`REG_ADDR_BUS] idex_reg_waddr_o;
+
     //FIXME: this is a test
-    reg [`MEM_BUS] ex_wdata_o;
+
+    //ex module
+    wire ex_reg_we_o;
+    wire ex_mem_we_o;
+    wire [`REG_ADDR_BUS] ex_reg_waddr_o;
+    wire [`REG_BUS] ex_reg_wdata_o;
+    wire [`MEM_ADDR_BUS] ex_mem_raddr_o;
+    wire [`MEM_ADDR_BUS] ex_mem_waddr_o;
+    wire [`MEM_BUS] ex_mem_wdata_o;
 
     always #10 clk = ~clk;
 
@@ -60,6 +80,8 @@ module top();
         $dumpvars(0, if_id_inst);
         $dumpvars(0, id_inst);
         $dumpvars(0, regs_inst);
+        $dumpvars(0, id_ex_inst);
+        $dumpvars(0, ex_inst);
         clk = 0;
         rst = `RSTN;
         jump_flag_i = `JUMP_NO;
@@ -68,13 +90,13 @@ module top();
         start_i = `ZERO_WORD;
         #10 rst = `RST;
         #10 rst = `RSTN;
-        #100 hold_flag_i = `HOLD_PC;
+        #100 hold_flag_i = `HOLD_NONE;
         #300 jump_flag_i = `JUMP_YES;
         jump_addr_i = 32'h00000004;
     end
 
     initial begin
-        #2000;
+        #3000;
         $display("Time Out.");
         $finish;
     end
@@ -107,6 +129,19 @@ module top();
         .inst_o(ifid_inst_o)
     );
 
+    regs regs_inst(
+        .clk(clk),
+        .rst(rst),
+        //FIXME: this should from execute module not decode
+        .raddr1_i(id_reg1_raddr_o),
+        .raddr2_i(id_reg2_raddr_o),
+        .we_i(ex_reg_we_o),
+        .waddr_i(ex_reg_waddr_o),
+        .wdata_i(ex_reg_wdata_o),
+        .rdata1_o(regs_reg1_rdata_o),
+        .rdata2_o(regs_reg2_rdata_o)
+    );
+
     id id_inst(
         .rst(rst),
         .inst_i(ifid_inst_o),
@@ -118,19 +153,47 @@ module top();
         .op1_o(id_op1_o),
         .op2_o(id_op2_o),
         .reg_we_o(id_we_o),
-        .reg_waddr_o(id_reg_waddr_o)
+        .reg_waddr_o(id_reg_waddr_o),
+        .inst_addr_o(id_inst_addr_o),
+        .inst_o(id_inst_o)
     );
 
-    regs regs_inst(
+    id_ex id_ex_inst(
         .clk(clk),
         .rst(rst),
-        //FIXME: this should from execute module not decode
-        .raddr1_i(id_reg1_raddr_o),
-        .raddr2_i(id_reg2_raddr_o),
-        .we_i(id_we_o),
-        .waddr_i(id_reg_waddr_o),
-        .wdata_i(ex_wdata_o),
-        .rdata1_o(regs_reg1_rdata_o),
-        .rdata2_o(regs_reg2_rdata_o)
+        .op1_i(id_op1_o),
+        .op2_i(id_op2_o),
+        .reg_we_i(id_we_o),
+        .reg_waddr_i(id_reg_waddr_o),
+        .inst_addr_i(id_inst_addr_o),
+        .inst_i(id_inst_o),
+        .hold_flag_i(hold_flag_i),
+        .inst_addr_o(idex_inst_addr_o),
+        .inst_o(idex_inst_o),
+        .op1_o(idex_op1_o),
+        .op2_o(idex_op2_o),
+        .reg_we_o(idex_reg_we_o),
+        .reg_waddr_o(idex_reg_waddr_o)
     );
+
+    ex ex_inst(
+        .clk(clk),
+        .rst(rst),
+        .op1_i(idex_op1_o),
+        .op2_i(idex_op2_o),
+        .inst_addr_i(idex_inst_addr_o),
+        .inst_i(idex_inst_o),
+        .reg_we_i(idex_reg_we_o),
+        .reg_waddr_i(idex_reg_waddr_o),
+        // .mem_data_i(),
+        .reg_we_o(ex_reg_we_o),
+        .reg_waddr_o(ex_reg_waddr_o),
+        .reg_wdata_o(ex_reg_wdata_o),
+        .mem_we_o(ex_mem_we_o),
+        .mem_raddr_o(ex_mem_raddr_o),
+        .mem_waddr_o(ex_mem_waddr_o),
+        .mem_wdata_o(ex_mem_wdata_o)
+    );
+
+
 endmodule //top

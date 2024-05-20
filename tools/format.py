@@ -3,7 +3,20 @@ import sys
 import os
 
 
-
+def defrectify(defstr):
+    if defstr == "\n" or defstr == "":
+        defstr = ""
+    elif defstr[-1] == "\n":
+        defstr = defstr[:-1]
+    else:
+        defstr = defstr
+    if re.fullmatch(
+        r"\s*(`define)\s*([0-9a-zA-Z\_]+)\s*(\()?\s*(.*)",
+        defstr
+    ):
+        print(defstr)
+        pass
+    exit(0)
 
 def iorectify(iostr):
     if iostr == "\n":
@@ -178,5 +191,7 @@ if __name__ == "__main__":
                     i = iorectify(line)
                     ii = paramrectify(i)
                     iii = varectify(ii)
+                    iiii = defrectify(iii)
+                    assert 0
                     file.write(iii + '\n')
 

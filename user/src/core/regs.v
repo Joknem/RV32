@@ -1,6 +1,5 @@
 `include "defines.v"
 
-// 通用寄存器模块
 module regs(
 
     input   wire                        clk                                         ,                   
@@ -25,7 +24,7 @@ module regs(
 
     );
 
-    reg     [`REG_BUS]                  regs                        [0:`REG_NUM - 1];              
+    reg     [`REG_BUS]                  regs                        [0:`REG_NUM - 1];                               
     
 
     // write regs

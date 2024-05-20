@@ -17,7 +17,7 @@ module pc_reg(
 
     always @ (posedge clk) begin
         if (rst == `RST) begin
-            pc_o <= `ZERO_WORD;
+            pc_o <= `PC_RST_ADDR;
         end else if (jump_flag_i == `JUMP_YES) begin
             pc_o <= jump_addr_i;
         end else if (hold_flag_i >= `HOLD_PC) begin
