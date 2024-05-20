@@ -10,13 +10,32 @@ def defrectify(defstr):
         defstr = defstr[:-1]
     else:
         defstr = defstr
-    if re.fullmatch(
-        r"\s*(`define)\s*([0-9a-zA-Z\_]+)\s*(\()?\s*(.*)",
+    n = re.fullmatch(
+        r"\s*(`define)\s*([0-9A-Z\_]+)\s*([0-9':bh]+)\s*",
         defstr
-    ):
-        print(defstr)
-        pass
-    exit(0)
+    )
+    if n:
+        tmpstr = ""
+        index = 1
+        for i in n.groups():
+            if i == None:
+                if index == 1:
+                    tmpstr += f'{" ":<16s}'
+                elif index == 2:
+                    tmpstr += f'{" ":<16s}'
+                elif index == 3:
+                    tmpstr += f'{" ":<16s}'
+            else:
+                if index == 1:
+                    tmpstr += f'{i:<16s}'
+                elif index == 2:
+                    tmpstr += f'{i:<16s}'
+                elif index == 3:
+                    tmpstr += f'{i:<16s}'
+            index += 1
+        return tmpstr
+    else:
+        return defstr
 
 def iorectify(iostr):
     if iostr == "\n":
@@ -38,7 +57,6 @@ def iorectify(iostr):
         tmpstr = "    "
         index = 1
         for i in n.groups():
-            # print(i)
             if i == None:
                 if index == 2:
                     tmpstr = tmpstr + f'{" ":<8s}'
@@ -176,7 +194,6 @@ def varectify(varstr):
 
 if __name__ == "__main__":
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    print(path)
     src_dir = os.path.join(path, "user", "src")
     src_list = []
     for root, dirs, files in os.walk(src_dir):
@@ -186,12 +203,14 @@ if __name__ == "__main__":
         for src_file in src_list:
             with open(src_file, 'r') as file:
                 lines = file.readlines()
+            for line in lines:
+                i = defrectify(line)
             with open(src_file, 'w') as file:
                 for line in lines:
                     i = iorectify(line)
                     ii = paramrectify(i)
                     iii = varectify(ii)
                     iiii = defrectify(iii)
-                    assert 0
-                    file.write(iii + '\n')
+                    file.write(iiii + '\n')
+
 
