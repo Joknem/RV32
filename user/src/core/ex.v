@@ -7,6 +7,8 @@ module ex(
     //from id_ex
     input   wire    [`MEM_BUS]          op1_i                                       ,                   
     input   wire    [`MEM_BUS]          op2_i                                       ,                   
+    input   wire    [`MEM_BUS]          op1_jump_i                                  ,                   
+    input   wire    [`MEM_BUS]          op2_jump_i                                  ,                   
     input   wire    [`MEM_ADDR_BUS]     inst_addr_i                                 ,                   
     input   wire    [`MEM_ADDR_BUS]     inst_i                                      ,                   
     input   wire                        reg_we_i                                    ,                   
@@ -15,7 +17,7 @@ module ex(
     input   wire    [`REG_BUS]          reg2_rdata_i                                ,                   
 
     //from mem
-    input   wire    [`MEM_BUS]          mem_data_i                                  ,                   
+    input   wire    [`MEM_BUS]          mem_rdata_i                                 ,                   
 
     //to regs
     output  wire                        reg_we_o                                    ,                   
@@ -24,15 +26,22 @@ module ex(
 
     //to mem
     output  reg                         mem_we_o                                    ,                   
-    output  wire    [`MEM_ADDR_BUS]     mem_raddr_o                                 ,                   
+    output  reg     [`MEM_ADDR_BUS]     mem_raddr_o                                 ,                   
     output  reg     [`MEM_ADDR_BUS]     mem_waddr_o                                 ,                   
-    output  reg     [`MEM_BUS]          mem_wdata_o                                                     
+    output  reg     [`MEM_BUS]          mem_wdata_o                                 ,                   
+
+    //to pc_reg
+    output  reg                         jump_flag_o                                 ,                   
+    output  reg     [`MEM_ADDR_BUS]     jump_addr_o                                 ,                   
+
+    output  reg     [`HOLD_FLAG_BUS]    hold_flag_o                                                     
 );
     wire    [`OPCODE_BUS]               opcode                                      ;                               
     wire    [`FUNCT7_BUS]               funct7                                      ;                               
     wire    [`FUNCT3_BUS]               funct3                                      ;                               
     wire    [`REG_ADDR_BUS]             rd                                          ;                               
     wire    [`MEM_BUS]                  op1_add_op2                                 ;                               
+    wire    [`MEM_ADDR_BUS]             op1_jump_add_op2_jump                       ;                               
     reg                                 reg_we                                      ;                               
     reg     [`REG_ADDR_BUS]             reg_waddr                                   ;                               
     reg     [`REG_BUS]                  reg_wdata                                   ;                               
@@ -44,17 +53,22 @@ module ex(
     assign reg_wdata_o = reg_wdata;
     assign reg_waddr_o = reg_waddr;
     assign op1_add_op2 = op1_i + op2_i;
+    assign op1_jump_add_op2_jump = op1_jump_i + op2_jump_i;
     assign reg_we_o = reg_we;
 
 
     always @(*)begin
         reg_we = reg_we_i;
         reg_waddr = reg_waddr_i;
+        jump_addr_o = `ZERO_WORD;
         case(opcode)
             `INST_TYPE_I:begin
                 mem_we_o = `WRITE_DISABLE;
                 mem_wdata_o = `ZERO_WORD;
                 mem_waddr_o = `ZERO_WORD;
+                mem_raddr_o = `ZERO_WORD;
+                jump_flag_o = `JUMP_NO;
+                hold_flag_o = `HOLD_NONE;
                 case(funct3)
                     `INST_ADDI:begin
                         reg_wdata = op1_add_op2;
@@ -91,6 +105,9 @@ module ex(
                 mem_we_o = `WRITE_DISABLE;
                 mem_wdata_o = `ZERO_WORD;
                 mem_waddr_o = `ZERO_WORD;
+                mem_raddr_o = `ZERO_WORD;
+                jump_flag_o = `JUMP_NO;
+                hold_flag_o = `HOLD_NONE;
                 case(funct3)
                     `INST_ADD:begin
                         reg_wdata = op1_add_op2;
@@ -124,21 +141,24 @@ module ex(
                 mem_we_o = `WRITE_DISABLE;
                 mem_wdata_o = `ZERO_WORD;
                 mem_waddr_o = `ZERO_WORD;
+                mem_raddr_o = `ZERO_WORD;
+                jump_flag_o = `JUMP_NO;
+                hold_flag_o = `HOLD_NONE;
                 case(funct3)
                     `INST_LB:begin
-                        reg_wdata = {{24{mem_data_i[7]}}, mem_data_i[7:0]};
+                        reg_wdata = {{24{mem_rdata_i[7]}}, mem_rdata_i[7:0]};
                     end
                     `INST_LH:begin
-                        reg_wdata = {{16{mem_data_i[15]}}, mem_data_i[15:0]};
+                        reg_wdata = {{16{mem_rdata_i[15]}}, mem_rdata_i[15:0]};
                     end
                     `INST_LW:begin
-                        reg_wdata = mem_data_i;
+                        reg_wdata = mem_rdata_i;
                     end
                     `INST_LBU:begin
-                        reg_wdata = {24'h0, mem_data_i[7:0]};
+                        reg_wdata = {24'h0, mem_rdata_i[7:0]};
                     end
                     `INST_LHU:begin
-                        reg_wdata = {16'h0, mem_data_i[15:0]};
+                        reg_wdata = {16'h0, mem_rdata_i[15:0]};
                     end
                     default:begin
                     end
@@ -147,19 +167,30 @@ module ex(
             `INST_TYPE_S:begin
                 mem_we_o = `WRITE_ENABLE;
                 mem_waddr_o = op1_add_op2;
+                mem_raddr_o = op1_add_op2;
+                reg_wdata = `ZERO_WORD;
+                jump_flag_o = `JUMP_NO;
+                hold_flag_o = `HOLD_NONE;
                 case(funct3)
                     `INST_SB:begin
-                        mem_wdata_o = {mem_data_i[31:8], reg2_rdata_i[7:0]};
+                        mem_wdata_o = {mem_rdata_i[31:8], reg2_rdata_i[7:0]};
                     end
                     `INST_SH:begin
-                        mem_wdata_o = {mem_data_i[31:16], reg2_rdata_i[15:0]};
+                        mem_wdata_o = {mem_rdata_i[31:16], reg2_rdata_i[15:0]};
                     end
                     `INST_SW:begin
-                        mem_wdata_o = {mem_data_i[31:8], reg2_rdata_i[7:0]};
+                        mem_wdata_o = reg2_rdata_i;
                     end
                     default:begin
                     end
                 endcase
+            end
+            `INST_JAL:begin
+                mem_we_o = `WRITE_DISABLE;
+                reg_wdata = op1_add_op2;
+                jump_flag_o = `JUMP_YES;
+                jump_addr_o = op1_jump_add_op2_jump;
+                hold_flag_o = `HOLD_ID;
             end
             default:begin
             end

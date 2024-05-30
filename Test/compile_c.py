@@ -60,8 +60,8 @@ if __name__ == "__main__":
         print("Usage: python compile_c.py <file_file>")
         sys.exit(1)
     src_file = sys.argv[1]
-    binary_file = src_file.split(".")[0] + ".elf"
-    text_file = src_file.split(".")[0] + ".txt"
-    compile_c(src_file)
-    objdump_bin2txt(binary_file)
-    objdump_txt2mem(text_file)
+    # binary_file = src_file.split(".")[0] + ".elf"
+    # text_file = src_file.split(".")[0] + ".txt"
+    # compile_c(src_file)
+    # objdump_bin2txt(binary_file)
+    objdump_txt2mem(src_file)

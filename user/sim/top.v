@@ -4,17 +4,17 @@
 `include "../src/core/pc_reg.v"
 `include "../src/core/if_id.v"
 `include "../src/utils/gen_dff.v"
-`include "../src/peripherals/rom.v"
 `include "../src/core/regs.v"
 `include "../src/core/id.v"
 `include "../src/core/id_ex.v"
 `include "../src/core/ex.v"
+`include "../src/peripherals/ram.v"
+`include "../src/peripherals/rom.v"
 
 
 module top();
     reg clk;
     reg rst;
-    reg jump_flag_i;
     reg [`MEM_ADDR_BUS] start_i;
     reg [`MEM_ADDR_BUS] jump_addr_i;
     reg [`HOLD_FLAG_BUS] hold_flag_i;
@@ -33,6 +33,8 @@ module top();
     wire id_reg_we_o;
     wire [`MEM_ADDR_BUS] id_op1_o;
     wire [`MEM_ADDR_BUS] id_op2_o;
+    wire [`MEM_ADDR_BUS] id_op1_jump_o;
+    wire [`MEM_ADDR_BUS] id_op2_jump_o;
     wire [`REG_ADDR_BUS] id_reg_waddr_o;
     wire [`MEM_ADDR_BUS] id_inst_addr_o;
     wire [`MEM_BUS] id_inst_o;
@@ -50,12 +52,12 @@ module top();
     wire [`MEM_BUS] idex_inst_o;
     wire [`MEM_ADDR_BUS] idex_op1_o;
     wire [`MEM_ADDR_BUS] idex_op2_o;
+    wire [`MEM_ADDR_BUS] idex_op1_jump_o;
+    wire [`MEM_ADDR_BUS] idex_op2_jump_o;
     wire idex_reg_we_o;
     wire [`REG_ADDR_BUS] idex_reg_waddr_o;
     wire [`REG_BUS] idex_reg1_rdata_o;
     wire [`REG_BUS] idex_reg2_rdata_o;
-
-    //FIXME: this is a test
 
     //ex module
     wire ex_reg_we_o;
@@ -65,19 +67,21 @@ module top();
     wire [`MEM_ADDR_BUS] ex_mem_raddr_o;
     wire [`MEM_ADDR_BUS] ex_mem_waddr_o;
     wire [`MEM_BUS] ex_mem_wdata_o;
+    wire [`MEM_ADDR_BUS] ex_jump_addr_o;
+    wire [`HOLD_FLAG_BUS] ex_hold_flag_o;
+    wire ex_jump_flag_o;
     wire [`REG_BUS] sp;
     wire [`REG_BUS] s0;
     wire [`REG_BUS] a5;
     wire [`REG_BUS] a4;
+    wire [`REG_BUS] a0;
+
+    //ram module
+    wire [`MEM_BUS] ram_rdata_o;
 
     always #10 clk = ~clk;
 
-    initial begin:mem_init
-        integer i;
-        for (i = 0; i < 32; i = i + 1) begin
-            regs_inst.regs[i] = `ZERO_WORD; // 初始化
-        end
-    end
+
 
     initial begin
         $dumpfile("./wave.vcd");
@@ -88,17 +92,14 @@ module top();
         $dumpvars(0, regs_inst);
         $dumpvars(0, id_ex_inst);
         $dumpvars(0, ex_inst);
+        $dumpvars(0, ram_inst);
         clk = 0;
         rst = `RSTN;
-        jump_flag_i = `JUMP_NO;
         jump_addr_i = `ZERO_WORD;
         hold_flag_i = `HOLD_NONE;
         start_i = `ZERO_WORD;
         #10 rst = `RST;
         #10 rst = `RSTN;
-        #100 hold_flag_i = `HOLD_NONE;
-        #300 jump_flag_i = `JUMP_YES;
-        jump_addr_i = 32'h00000004;
     end
 
     initial begin
@@ -112,9 +113,9 @@ module top();
         .clk(clk),
         .rst(rst),
         .start_i(start_i),
-        .jump_flag_i(jump_flag_i),
-        .jump_addr_i(jump_addr_i),
-        .hold_flag_i(hold_flag_i),
+        .jump_flag_i(ex_jump_flag_o),
+        .jump_addr_i(ex_jump_addr_o),
+        .hold_flag_i(ex_hold_flag_o),
         .pc_o(pc_o)
     );
 
@@ -128,7 +129,7 @@ module top();
     if_id if_id_inst(
         .clk(clk),
         .rst(rst),
-        .hold_flag_i(hold_flag_i),
+        .hold_flag_i(ex_hold_flag_o),
         .inst_i(rom_inst_o),
         .inst_addr_i(pc_o),
         .inst_addr_o(ifid_inst_addr_o),
@@ -149,7 +150,8 @@ module top();
         .sp(sp),
         .s0(s0),
         .a5(a5),
-        .a4(a4)
+        .a4(a4),
+        .a0(a0)
     );
 
     id id_inst(
@@ -162,6 +164,8 @@ module top();
         .reg2_raddr_o(id_reg2_raddr_o),
         .op1_o(id_op1_o),
         .op2_o(id_op2_o),
+        .op1_jump_o(id_op1_jump_o),
+        .op2_jump_o(id_op2_jump_o),
         .reg_we_o(id_we_o),
         .reg_waddr_o(id_reg_waddr_o),
         .inst_addr_o(id_inst_addr_o),
@@ -175,19 +179,23 @@ module top();
         .rst(rst),
         .op1_i(id_op1_o),
         .op2_i(id_op2_o),
+        .op1_jump_i(id_op1_jump_o),
+        .op2_jump_i(id_op2_jump_o),
         .reg_we_i(id_we_o),
         .reg_waddr_i(id_reg_waddr_o),
         .inst_addr_i(id_inst_addr_o),
         .inst_i(id_inst_o),
         .reg1_rdata_i(id_reg1_rdata_o),
         .reg2_rdata_i(id_reg2_rdata_o),
-        .hold_flag_i(hold_flag_i),
+        .hold_flag_i(ex_hold_flag_o),
         .reg1_rdata_o(idex_reg1_rdata_o),
         .reg2_rdata_o(idex_reg2_rdata_o),
         .inst_addr_o(idex_inst_addr_o),
         .inst_o(idex_inst_o),
         .op1_o(idex_op1_o),
         .op2_o(idex_op2_o),
+        .op1_jump_o(idex_op1_jump_o),
+        .op2_jump_o(idex_op2_jump_o),
         .reg_we_o(idex_reg_we_o),
         .reg_waddr_o(idex_reg_waddr_o)
     );
@@ -197,20 +205,35 @@ module top();
         .rst(rst),
         .op1_i(idex_op1_o),
         .op2_i(idex_op2_o),
+        .op1_jump_i(idex_op1_jump_o),
+        .op2_jump_i(idex_op2_jump_o),
         .inst_addr_i(idex_inst_addr_o),
         .inst_i(idex_inst_o),
         .reg_we_i(idex_reg_we_o),
         .reg_waddr_i(idex_reg_waddr_o),
         .reg1_rdata_i(idex_reg1_rdata_o),
         .reg2_rdata_i(idex_reg2_rdata_o),
-        .mem_data_i(32'h0),
+        .mem_rdata_i(ram_rdata_o),
         .reg_we_o(ex_reg_we_o),
         .reg_waddr_o(ex_reg_waddr_o),
         .reg_wdata_o(ex_reg_wdata_o),
         .mem_we_o(ex_mem_we_o),
         .mem_raddr_o(ex_mem_raddr_o),
         .mem_waddr_o(ex_mem_waddr_o),
-        .mem_wdata_o(ex_mem_wdata_o)
+        .mem_wdata_o(ex_mem_wdata_o),
+        .jump_addr_o(ex_jump_addr_o),
+        .jump_flag_o(ex_jump_flag_o),
+        .hold_flag_o(ex_hold_flag_o)
+    );
+
+    ram ram_inst(
+        .clk(clk),
+        .rst(rst),
+        .we_i(ex_mem_we_o),
+        .wdata_i(ex_mem_wdata_o),
+        .waddr_i(ex_mem_waddr_o),
+        .raddr_i(ex_mem_raddr_o),
+        .rdata_o(ram_rdata_o)
     );
 
 

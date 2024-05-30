@@ -24,15 +24,24 @@ module regs(
     output  wire    [`REG_BUS]          sp                                          ,                   
     output  wire    [`REG_BUS]          s0                                          ,                   
     output  wire    [`REG_BUS]          a5                                          ,                   
-    output  wire    [`REG_BUS]          a4                                                              
+    output  wire    [`REG_BUS]          a4                                          ,                   
+    output  wire    [`REG_BUS]          a0                                                              
     );
 
     reg     [`REG_BUS]                  regs                        [0:`REG_NUM - 1];                               
-    
     assign sp = regs[2];
     assign s0 = regs[8];
     assign a5 = regs[15];
     assign a4 = regs[14];
+    assign a0 = regs[10];
+
+    //FIXME: 初始化寄存器的值
+    initial begin:regs_init
+        integer i;
+        for (i = 0; i < 32; i = i + 1) begin
+            regs[i] = `ZERO_WORD; // 初始化
+        end
+    end
 
     // write regs
     always @ (posedge clk) begin

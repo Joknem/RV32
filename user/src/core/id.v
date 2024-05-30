@@ -10,9 +10,6 @@ module id(
     input   wire    [`REG_BUS]          reg1_rdata_i                                ,                   
     input   wire    [`REG_BUS]          reg2_rdata_i                                ,                   
 
-    //from ex
-    input   wire                        jump_flag_i                                 ,                   
-
     //to regs
     output  reg     [`REG_ADDR_BUS]     reg1_raddr_o                                ,                   
     output  reg     [`REG_ADDR_BUS]     reg2_raddr_o                                ,                   
@@ -23,6 +20,8 @@ module id(
     output  reg     [`REG_BUS]          reg2_rdata_o                                ,                   
     output  reg     [`MEM_ADDR_BUS]     op1_o                                       ,                   
     output  reg     [`MEM_ADDR_BUS]     op2_o                                       ,                   
+    output  reg     [`MEM_ADDR_BUS]     op1_jump_o                                  ,                   
+    output  reg     [`MEM_ADDR_BUS]     op2_jump_o                                  ,                   
     output  reg                         reg_we_o                                    ,                   
     output  reg     [`REG_ADDR_BUS]     reg_waddr_o                                 ,                   
     output  reg     [`MEM_ADDR_BUS]     inst_addr_o                                 ,                   
@@ -69,7 +68,7 @@ module id(
             `INST_TYPE_R:begin
                 case(funct3)
                     `INST_ADD, `INST_SLL, `INST_SLT, `INST_SLTU, `INST_XOR, `INST_SR, `INST_OR, `INST_AND: begin
-                            reg_we_o = `WRITE_DISABLE;
+                            reg_we_o = `WRITE_ENABLE;
                             reg_waddr_o = rd;
                             reg1_raddr_o = rs1;
                             reg2_raddr_o = rs2;
@@ -147,8 +146,8 @@ module id(
                 reg2_raddr_o = `ZERO_REG;
                 op1_o = inst_addr_i;
                 op2_o = 32'h4;
-                // op1_jump_o = inst_addr_i;
-                // op2_jump_o = {{12{inst_i[31]}}, inst_i[19:12], inst_i[20], inst_i[30:21], 1'b0};
+                op1_jump_o = inst_addr_i;
+                op2_jump_o = {{12{inst_i[31]}}, inst_i[19:12], inst_i[20], inst_i[30:21], 1'b0};
             end
             `INST_JALR: begin
                 reg_we_o = `WRITE_ENABLE;
