@@ -22,12 +22,12 @@ module ram (
         if(rst == `RST)begin
             rdata_o <= `ZERO_WORD;
         end
-        rdata_o <= ram[{raddr_i[31:2], 2'b0}];
+        rdata_o <= ram[{1'b0, raddr_i[30:2], 2'b0}];
     end
 
     always @(*)begin
         if(we_i == `WRITE_ENABLE) begin
-            ram[{waddr_i[31:2], 2'b0}] = wdata_i;
+            ram[{1'b0, waddr_i[30:2], 2'b0}] = wdata_i;
         end
     end
 

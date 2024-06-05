@@ -12,8 +12,8 @@
 
 //define the size of the memory and register file
 `define         REG_NUM         32              
-`define         ROM_SIZE        4096            
-`define         MEM_SIZE        4096            
+`define         ROM_SIZE        4096       
+`define         MEM_SIZE        4096       
 
 `define         RST             1'b1            
 `define         RSTN            1'b0            

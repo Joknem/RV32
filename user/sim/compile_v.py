@@ -23,7 +23,7 @@ def clean_include(path):
 def compile(path):
     iverilog_cmd = ['iverilog', '-o', 'a.out', path + '/sim/top.v']
     process = subprocess.Popen(iverilog_cmd)
-    process.wait(timeout=5)
+    process.wait()
 
 def add_include(path):
     src_dir = os.path.join(path, "src")

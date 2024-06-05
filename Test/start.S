@@ -3,9 +3,8 @@
 .global main
 
 _start:
-    lui sp, %hi(_stack_start)
-    addi sp, sp, %lo(_stack_start)
-    jal zero, main
+    la sp, _stack_top
+    call main
 
 loop:
     j loop
