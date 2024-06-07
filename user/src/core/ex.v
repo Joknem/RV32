@@ -91,10 +91,11 @@ module ex(
                     `INST_SLTIU:begin
                         reg_wdata = ($unsigned(op1_i) < $unsigned(op2_i)) ? 32'h00000001 : `ZERO_WORD;
                     end
-                    //FIXME: !!!!!!!!!!!!!!!
                     `INST_SRI: begin
                         if (inst_i[30] == 1'b1) begin
+                            //TODO: 算数右移
                         end else begin
+                            //逻辑右移
                         end
                     end
                     default:begin
@@ -189,21 +190,94 @@ module ex(
                 mem_we_o = `WRITE_DISABLE;
                 reg_wdata = `ZERO_WORD;
                 reg_we = `WRITE_DISABLE;
-                jump_flag_o = `JUMP_YES;
+                hold_flag_o = `HOLD_NONE;
                 case(funct3)
-                    `INST_BEQ, `INST_BNE, `INST_BLT, `INST_BGE, `INST_BLTU, `INST_BGEU: begin
-
+                    `INST_BEQ:begin
+                        jump_flag_o = (op1_i == op2_i);
+                        hold_flag_o = {3{jump_flag_o}} & `HOLD_ID;
+                        jump_addr_o = {32{jump_flag_o}} & op1_jump_add_op2_jump;
+                    end   
+                    `INST_BNE:begin
+                        jump_flag_o = (op1_i != op2_i);
+                        hold_flag_o = {3{jump_flag_o}} & `HOLD_ID;
+                        jump_addr_o = {32{jump_flag_o}} & op1_jump_add_op2_jump;
+                    end   
+                    `INST_BLT:begin
+                        jump_flag_o = (op1_i < op2_i);
+                        hold_flag_o = {3{jump_flag_o}} & `HOLD_ID;
+                        jump_addr_o = {32{jump_flag_o}} & op1_jump_add_op2_jump;
+                    end
+                    `INST_BGE:begin
+                        jump_flag_o = (op1_i >= op2_i);
+                        hold_flag_o = {3{jump_flag_o}} & `HOLD_ID;
+                        jump_addr_o = {32{jump_flag_o}} & op1_jump_add_op2_jump;
+                    end
+                    `INST_BLTU:begin
+                        jump_flag_o = ($unsigned(op1_i) < $unsigned(op2_i));
+                        hold_flag_o = {3{jump_flag_o}} & `HOLD_ID;
+                        jump_addr_o = {32{jump_flag_o}} & op1_jump_add_op2_jump;
+                    end
+                    `INST_BGEU:begin
+                        jump_flag_o = ($unsigned(op1_i) >= $unsigned(op2_i));
+                        hold_flag_o = {3{jump_flag_o}} & `HOLD_ID;
+                        jump_addr_o = {32{jump_flag_o}} & op1_jump_add_op2_jump;
+                    end
+                    default:begin
+                        jump_flag_o = `JUMP_NO;
+                        jump_addr_o = `ZERO_WORD;
+                        hold_flag_o = `HOLD_NONE;
                     end
                 endcase
             end
             `INST_JAL:begin
                 mem_we_o = `WRITE_DISABLE;
+                mem_waddr_o = `ZERO_WORD;
+                mem_wdata_o = `ZERO_WORD;
+                mem_raddr_o = `ZERO_WORD;
                 reg_wdata = op1_add_op2;
                 jump_flag_o = `JUMP_YES;
                 jump_addr_o = op1_jump_add_op2_jump;
                 hold_flag_o = `HOLD_ID;
             end
+            `INST_JALR:begin
+                mem_we_o = `WRITE_DISABLE;
+                mem_waddr_o = `ZERO_WORD;
+                mem_wdata_o = `ZERO_WORD;
+                mem_raddr_o = `ZERO_WORD;
+                reg_wdata = op1_add_op2;
+                jump_flag_o = `JUMP_YES;
+                jump_addr_o = op1_jump_add_op2_jump;
+                hold_flag_o = `HOLD_ID;
+            end
+            `INST_LUI, `INST_AUIPC:begin
+                mem_we_o = `WRITE_DISABLE;
+                mem_waddr_o = `ZERO_WORD;
+                mem_wdata_o = `ZERO_WORD;
+                mem_raddr_o = `ZERO_WORD;
+                reg_wdata = op1_add_op2;
+                jump_flag_o = `JUMP_NO;
+                jump_addr_o = `ZERO_WORD;
+                hold_flag_o = `HOLD_NONE;
+            end
+            `INST_NOP_OP:begin
+                mem_we_o = `WRITE_DISABLE;
+                mem_waddr_o = `ZERO_WORD;
+                mem_wdata_o = `ZERO_WORD;
+                mem_raddr_o= `ZERO_WORD;
+                reg_wdata = `ZERO_WORD;
+                jump_flag_o = `JUMP_NO;
+                jump_addr_o = `ZERO_WORD;
+                hold_flag_o = `HOLD_NONE;
+            end
             default:begin
+                mem_we_o = `WRITE_DISABLE;
+                mem_waddr_o = `ZERO_WORD;
+                mem_wdata_o = `ZERO_WORD;
+                mem_raddr_o= `ZERO_WORD;
+                reg_wdata = `ZERO_WORD;
+                jump_flag_o = `JUMP_NO;
+                jump_addr_o = `ZERO_WORD;
+                hold_flag_o = `HOLD_NONE;
             end
         endcase
     end

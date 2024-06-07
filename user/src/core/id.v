@@ -128,8 +128,8 @@ module id(
                         reg_waddr_o = `ZERO_REG;
                         op1_o = reg1_rdata_i;
                         op2_o = reg2_rdata_i;
-                        // op1_jump_o = inst_addr_i;
-                        // op2_jump_o = {{20{inst_i[31]}}, inst_i[7], inst_i[30:25], inst_i[11:8], 1'b0};
+                        op1_jump_o = inst_addr_i;
+                        op2_jump_o = {{20{inst_i[31]}}, inst_i[7], inst_i[30:25], inst_i[11:8], 1'b0};
                     end
                     default: begin
                         reg1_raddr_o = `ZERO_REG;
@@ -156,8 +156,8 @@ module id(
                 reg_waddr_o = rd;
                 op1_o = inst_addr_i;
                 op2_o = 32'h4;
-                // op1_jump_o = reg1_rdata_i;
-                // op2_jump_o = {{20{inst_i[31]}}, inst_i[31:20]};
+                op1_jump_o = reg1_rdata_i;
+                op2_jump_o = {{20{inst_i[31]}}, inst_i[31:20]};
             end
             `INST_LUI: begin
                 reg_we_o = `WRITE_ENABLE;

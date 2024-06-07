@@ -103,7 +103,7 @@ module top();
     end
 
     initial begin
-        #3000;
+        #30000;
         $display("Time Out.");
         $finish;
     end

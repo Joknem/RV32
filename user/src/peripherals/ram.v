@@ -9,7 +9,7 @@ module ram (
     //tests below
     output  reg                         write_ok                                    ,                   
     input   wire    [`MEM_ADDR_BUS]     raddr_i                                     ,                   
-    output  reg     [`MEM_BUS]          rdata_o                                                        
+    output  reg     [`MEM_BUS]          rdata_o                                                         
 );
     reg     [`MEM_BUS]                  ram                         [0:`MEM_SIZE-1] ;                               
     initial begin : ram_init
