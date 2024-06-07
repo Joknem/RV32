@@ -1,6 +1,6 @@
 .section .text
 .global _start
-.global main
+.type _start, @function
 
 _start:
     la sp, _stack_top

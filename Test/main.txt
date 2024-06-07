@@ -5,7 +5,7 @@ main.elf:     file format elf32-littleriscv
 Disassembly of section .text:
 
 00000000 <_start>:
-   0:	10008117          	auipc	sp,0x10008
+   0:	10001117          	auipc	sp,0x10001
    4:	00010113          	mv	sp,sp
    8:	008000ef          	jal	10 <main>
 
@@ -13,7 +13,7 @@ Disassembly of section .text:
    c:	0000006f          	j	c <loop>
 
 00000010 <main>:
-  10:	fe010113          	add	sp,sp,-32 # 10007fe0 <__bss_end+0x7fe0>
+  10:	fe010113          	add	sp,sp,-32 # 10000fe0 <__bss_end+0xfe0>
   14:	00812e23          	sw	s0,28(sp)
   18:	02010413          	add	s0,sp,32
   1c:	00100793          	li	a5,1
@@ -24,8 +24,13 @@ Disassembly of section .text:
   30:	fe842783          	lw	a5,-24(s0)
   34:	00f707b3          	add	a5,a4,a5
   38:	fef42223          	sw	a5,-28(s0)
-  3c:	fe442783          	lw	a5,-28(s0)
-  40:	00078513          	mv	a0,a5
-  44:	01c12403          	lw	s0,28(sp)
-  48:	02010113          	add	sp,sp,32
-  4c:	00008067          	ret
+  3c:	fe442703          	lw	a4,-28(s0)
+  40:	00300793          	li	a5,3
+  44:	00f71663          	bne	a4,a5,50 <main+0x40>
+  48:	00000793          	li	a5,0
+  4c:	0080006f          	j	54 <main+0x44>
+  50:	fe442783          	lw	a5,-28(s0)
+  54:	00078513          	mv	a0,a5
+  58:	01c12403          	lw	s0,28(sp)
+  5c:	02010113          	add	sp,sp,32
+  60:	00008067          	ret

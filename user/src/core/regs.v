@@ -12,14 +12,10 @@ module regs(
 
     // from id
     input   wire    [`REG_ADDR_BUS]     raddr1_i                                    ,           // 读寄存器1地址
-
-    // to id
-    output  reg     [`REG_BUS]          rdata1_o                                    ,           // 读寄存器1数据
-
-    // from id
     input   wire    [`REG_ADDR_BUS]     raddr2_i                                    ,           // 读寄存器2地址
 
     // to id
+    output  reg     [`REG_BUS]          rdata1_o                                    ,           // 读寄存器1数据
     output  reg     [`REG_BUS]          rdata2_o                                    ,           // 读寄存器2数据
     output  wire    [`REG_BUS]          sp                                          ,                   
     output  wire    [`REG_BUS]          s0                                          ,                   

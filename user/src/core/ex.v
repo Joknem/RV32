@@ -141,7 +141,7 @@ module ex(
                 mem_we_o = `WRITE_DISABLE;
                 mem_wdata_o = `ZERO_WORD;
                 mem_waddr_o = `ZERO_WORD;
-                mem_raddr_o = `ZERO_WORD;
+                mem_raddr_o = op1_add_op2;
                 jump_flag_o = `JUMP_NO;
                 hold_flag_o = `HOLD_NONE;
                 case(funct3)
@@ -182,6 +182,17 @@ module ex(
                         mem_wdata_o = reg2_rdata_i;
                     end
                     default:begin
+                    end
+                endcase
+            end
+            `INST_TYPE_B:begin
+                mem_we_o = `WRITE_DISABLE;
+                reg_wdata = `ZERO_WORD;
+                reg_we = `WRITE_DISABLE;
+                jump_flag_o = `JUMP_YES;
+                case(funct3)
+                    `INST_BEQ, `INST_BNE, `INST_BLT, `INST_BGE, `INST_BLTU, `INST_BGEU: begin
+
                     end
                 endcase
             end

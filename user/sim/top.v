@@ -139,7 +139,6 @@ module top();
     regs regs_inst(
         .clk(clk),
         .rst(rst),
-        //FIXME: this should from execute module not decode
         .raddr1_i(id_reg1_raddr_o),
         .raddr2_i(id_reg2_raddr_o),
         .we_i(ex_reg_we_o),
@@ -153,13 +152,12 @@ module top();
         .a4(a4),
         .a0(a0)
     );
-
     id id_inst(
         .rst(rst),
         .inst_i(ifid_inst_o),
         .inst_addr_i(ifid_inst_addr_o),
         .reg1_rdata_i(regs_reg1_rdata_o),
-        .reg2_rdata_i(regs_reg1_rdata_o),
+        .reg2_rdata_i(regs_reg2_rdata_o),
         .reg1_raddr_o(id_reg1_raddr_o),
         .reg2_raddr_o(id_reg2_raddr_o),
         .op1_o(id_op1_o),

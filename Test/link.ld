@@ -20,7 +20,7 @@ SECTIONS
         __bss_end = .;
     } > RAM
     _stack_start = ORIGIN(RAM) + LENGTH(RAM);
-    _stack_top = . + 0x8000;
+    _stack_top = . + 0x1000;
     _end = .;
 }
 
