@@ -8,19 +8,50 @@ MEMORY{
 
 SECTIONS
 {
-    .text : {*(.text)} > ROM
-    .data : { *(.data) } > RAM AT > ROM
-    .rodata : { 
-        *(.rodata)
+    __stack_size = DEFINED(__stack_size) ? __stack_size : 8K;
+    .init : {KEEP (*(SORT_NONE(.init)))} > ROM
+    .text : {
+        *(.text .text.*)
         } > ROM
+    . = ALIGN(4);
+    PROVIDE(__etext = .);
+    PROVIDE(_etext = .);
+    PROVIDE(etext = .);
+
+    .lalign : {
+        . = ALIGN(4);
+        PROVIDE(_data_lma = .);
+    } > ROM AT > ROM
+
+    .dalign : {
+        . = ALIGN(4);
+        PROVIDE(_data = .);
+    } > RAM AT > ROM
+
+    .data : { 
+        *(.data .data.*)
+        *(.rdata)
+        *(.rodata rodata.*)
+        } > RAM AT > ROM
+    . = ALIGN(4);
+    PROVIDE(_edata = .);
+    PROVIDE(edata = .);
+
+    PROVIDE(__bss_start = .);
     .bss : {
-        __bss_start = .;
-        *(.bss)
+        *(.bss .bss.*)
+        *(.sbss*)
         *(COMMON)
-        __bss_end = .;
-    } > RAM
-    _stack_start = ORIGIN(RAM) + LENGTH(RAM);
-    _stack_top = . + 0x1000;
-    _end = .;
+        . = ALIGN(4);
+    } > RAM AT > RAM
+    . = ALIGN(8);
+    PROVIDE(_end = .);
+    PROVIDE(end = .);
+
+    .stack ORIGIN(RAM) + LENGTH(RAM) - __stack_size : {
+        PROVIDE(__heap_end = .);
+        . = __stack_size;
+        PROVIDE(_sp = .);
+    } > RAM AT > RAM
 }
 

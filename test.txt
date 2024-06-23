@@ -1,0 +1,27 @@
+
+test.o:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00000000 <main>:
+   0:	fe010113          	add	sp,sp,-32
+   4:	00812e23          	sw	s0,28(sp)
+   8:	02010413          	add	s0,sp,32
+   c:	00a00793          	li	a5,10
+  10:	fef42623          	sw	a5,-20(s0)
+  14:	00500793          	li	a5,5
+  18:	fef42423          	sw	a5,-24(s0)
+  1c:	fec42783          	lw	a5,-20(s0)
+  20:	fe842703          	lw	a4,-24(s0)
+  24:	00e787b3          	add	a5,a5,a4
+  28:	fef42223          	sw	a5,-28(s0)
+  2c:	fec42783          	lw	a5,-20(s0)
+  30:	fe842703          	lw	a4,-24(s0)
+  34:	00e787b3          	add	a5,a5,a4
+  38:	fef42223          	sw	a5,-28(s0)
+  3c:	00000793          	li	a5,0
+  40:	00078513          	mv	a0,a5
+  44:	01c12403          	lw	s0,28(sp)
+  48:	02010113          	add	sp,sp,32
+  4c:	00008067          	ret

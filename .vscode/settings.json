@@ -1,9 +1,11 @@
 {
     "digital-ide.function.lsp.linter.vlog.diagnostor": "default",
-    "accessibility.signals.sounds.volume": 0,
     "accessibility.signals.lineHasError": {
         "sound": "off",
         "announcement": "off"
     },
-    "python.REPL.enableREPLSmartSend": false
+    "python.REPL.enableREPLSmartSend": false,
+    "accessibility.signalOptions": {
+        "volume": 0
+    }
 }

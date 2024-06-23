@@ -7,17 +7,17 @@ ASM_OBJECT := $(patsubst %.s,%.o, $(patsubst %.S,%.o,$(ASM_SOURCE)))
 C_OBJECT := $(patsubst %.c,%.o,$(C_SOURCE))
 CC := $(CC_PREFIX)gcc
 C_FLAGS := -nostdlib -march=rv32i -mabi=ilp32 -c
+C_FLAGS += -DSIM
 LD_FLAGS := -m elf32lriscv -T link.ld
-COPY_FLAGS := -O binary
-DUMP_FLAGS := -D -j .text
+DUMP_FLAGS := -D -j .text -j .init
+GEN_MEMFILE := python3 compile_c.py main.txt
+DUMP_TXT := main.txt
+ELF_TXT := all.txt
 FINAL := main.elf
-BIN := main.bin
 
 
-all: $(C_OBJECT) $(ASM_OBJECT)
-	@$(CC_PREFIX)ld $(LD_FLAGS) -o $(FINAL) $(ASM_OBJECT) $(C_OBJECT)
-	@$(CC_PREFIX)objcopy $(COPY_FLAGS) $(FINAL) $(BIN)
-	@$(CC_PREFIX)objdump $(DUMP_FLAGS) $(FINAL) > main.txt
+all: readelf
+	@$(GEN_MEMFILE)
 	@rm *.o
 
 $(ASM_OBJECT): $(ASM_SOURCE)
@@ -26,6 +26,12 @@ $(ASM_OBJECT): $(ASM_SOURCE)
 $(C_OBJECT): $(C_SOURCE)
 	@$(CC) $(C_FLAGS) $(C_SOURCE)
 
+$(FINAL): $(C_OBJECT) $(ASM_OBJECT)
+	@$(CC_PREFIX)ld $(LD_FLAGS) -o $(FINAL) $(ASM_OBJECT) $(C_OBJECT)
+	@echo "compile finished!"
+	@$(CC_PREFIX)objdump $(DUMP_FLAGS) $(FINAL) > $(DUMP_TXT)
+	@echo "objdump finished!"
+
 echo:
 	@echo $(C_OBJECT) $(ASM_OBJECT)
 
@@ -33,6 +39,7 @@ readelf: $(FINAL)
 	@$(CC_PREFIX)readelf -a $(FINAL) > all.txt
 
 clean:
-	rm -rf *.o
+	rm $(FINAL)
+	rm -rf *.txt 
 .PHONY:
-	build dump all
+	all, echo, readelf, clean<|endoftext|>

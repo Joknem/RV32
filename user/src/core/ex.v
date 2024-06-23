@@ -71,7 +71,7 @@ module ex(
                 hold_flag_o = `HOLD_NONE;
                 case(funct3)
                     `INST_ADDI:begin
-                        reg_wdata = op1_add_op2;
+                            reg_wdata = op1_add_op2;
                     end
                     `INST_ANDI:begin
                         reg_wdata = op1_i & op2_i;
@@ -93,9 +93,9 @@ module ex(
                     end
                     `INST_SRI: begin
                         if (inst_i[30] == 1'b1) begin
-                            //TODO: 算数右移
+                            //TODO:算数右移
                         end else begin
-                            //逻辑右移
+                            //TODO:逻辑右移
                         end
                     end
                     default:begin
@@ -111,7 +111,12 @@ module ex(
                 hold_flag_o = `HOLD_NONE;
                 case(funct3)
                     `INST_ADD:begin
-                        reg_wdata = op1_add_op2;
+                        if(inst_i[30] == 1'b1)begin
+                            reg_wdata = op1_i - op2_i;
+                        end
+                        else begin
+                            reg_wdata = op1_add_op2;
+                        end
                     end
                     `INST_SLL:begin
                         reg_wdata = op1_i << op2_i[4:0];
