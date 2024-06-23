@@ -2,13 +2,13 @@ OUTPUT_ARCH("riscv")
 OUTPUT_FORMAT("elf32-littleriscv")
 ENTRY(_start)
 MEMORY{
-    ROM (rx) : ORIGIN = 0x00000000, LENGTH = 0x00010000
-    RAM (rwx) : ORIGIN = 0x10000000, LENGTH = 0x00010000
+    ROM (rx) : ORIGIN = 0x00000000, LENGTH = 0x00001000
+    RAM (rwx) : ORIGIN = 0x10000000, LENGTH = 0x00001000
 }
 
 SECTIONS
 {
-    __stack_size = DEFINED(__stack_size) ? __stack_size : 8K;
+    __stack_size = DEFINED(__stack_size) ? __stack_size : 0x400;
     .init : {KEEP (*(SORT_NONE(.init)))} > ROM
     .text : {
         *(.text .text.*)
