@@ -35,6 +35,10 @@
 
 
 `define         INST_NOP        32'h00000013    
+//GPIO
+`define         OUTPUT          2'01            
+`define         INPUT           2'10            
+`define         HIGH_INPEDANCE  2'00            
 
 //I type instructions
 `define         INST_TYPE_I     7'b0010011      

@@ -9,24 +9,24 @@ Disassembly of section .init:
    4:	00010113          	mv	sp,sp
    8:	00000d13          	li	s10,0
    c:	00000d93          	li	s11,0
-  10:	0cc00513          	li	a0,204
+  10:	12000513          	li	a0,288
   14:	10000597          	auipc	a1,0x10000
-  18:	fec58593          	add	a1,a1,-20 # 10000000 <__bss_start>
+  18:	fec58593          	addi	a1,a1,-20 # 10000000 <__bss_start>
   1c:	10000617          	auipc	a2,0x10000
-  20:	fe460613          	add	a2,a2,-28 # 10000000 <__bss_start>
+  20:	fe460613          	addi	a2,a2,-28 # 10000000 <__bss_start>
   24:	00c5fc63          	bgeu	a1,a2,3c <_start+0x3c>
   28:	00052283          	lw	t0,0(a0)
   2c:	0055a023          	sw	t0,0(a1)
-  30:	00450513          	add	a0,a0,4
-  34:	00458593          	add	a1,a1,4
+  30:	00450513          	addi	a0,a0,4
+  34:	00458593          	addi	a1,a1,4
   38:	fec5e8e3          	bltu	a1,a2,28 <_start+0x28>
   3c:	10000517          	auipc	a0,0x10000
-  40:	fc450513          	add	a0,a0,-60 # 10000000 <__bss_start>
+  40:	fc450513          	addi	a0,a0,-60 # 10000000 <__bss_start>
   44:	10000597          	auipc	a1,0x10000
-  48:	fbc58593          	add	a1,a1,-68 # 10000000 <__bss_start>
+  48:	fbc58593          	addi	a1,a1,-68 # 10000000 <__bss_start>
   4c:	00b57863          	bgeu	a0,a1,5c <_start+0x5c>
   50:	00052023          	sw	zero,0(a0)
-  54:	00450513          	add	a0,a0,4
+  54:	00450513          	addi	a0,a0,4
   58:	feb56ce3          	bltu	a0,a1,50 <_start+0x50>
   5c:	01c000ef          	jal	78 <main>
   60:	00100d13          	li	s10,1
@@ -37,15 +37,15 @@ Disassembly of section .init:
 Disassembly of section .text:
 
 00000068 <assert_failed>:
-  68:	ff010113          	add	sp,sp,-16 # 10000ff0 <__bss_start+0xff0>
+  68:	ff010113          	addi	sp,sp,-16 # 10000ff0 <__bss_start+0xff0>
   6c:	00812623          	sw	s0,12(sp)
-  70:	01010413          	add	s0,sp,16
+  70:	01010413          	addi	s0,sp,16
   74:	0000006f          	j	74 <assert_failed+0xc>
 
 00000078 <main>:
-  78:	fe010113          	add	sp,sp,-32
+  78:	fe010113          	addi	sp,sp,-32
   7c:	00812e23          	sw	s0,28(sp)
-  80:	02010413          	add	s0,sp,32
+  80:	02010413          	addi	s0,sp,32
   84:	00100793          	li	a5,1
   88:	fef42623          	sw	a5,-20(s0)
   8c:	00200793          	li	a5,2
@@ -62,5 +62,5 @@ Disassembly of section .text:
   b8:	00000793          	li	a5,0
   bc:	00078513          	mv	a0,a5
   c0:	01c12403          	lw	s0,28(sp)
-  c4:	02010113          	add	sp,sp,32
+  c4:	02010113          	addi	sp,sp,32
   c8:	00008067          	ret

@@ -212,5 +212,6 @@ if __name__ == "__main__":
                     iii = varectify(ii)
                     iiii = defrectify(iii)
                     file.write(iiii + '\n')
+    print("Format ok!")
 
 

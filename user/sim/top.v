@@ -8,8 +8,10 @@
 `include "../src/core/id.v"
 `include "../src/core/id_ex.v"
 `include "../src/core/ex.v"
+`include "../src/core/bus.v"
 `include "../src/peripherals/ram.v"
 `include "../src/peripherals/rom.v"
+`include "../src/peripherals/gpio.v"
 
 
 module top();
@@ -262,6 +264,17 @@ module top();
         .raddr_i(ex_mem_raddr_o),
         .rdata_o(ram_rdata_o)
     );
+
+    //BUG: fix this
+    gpio gpio_inst(
+        .clk(clk),
+        .rst(rst),
+        .we_i(ex_mem_we_o),
+        .wdata_i(ex_mem_wdata_o),
+        .waddr_i(ex_mem_waddr_o),
+        .raddr_i(ex_mem_raddr_o),
+        .rdata_o(ram_rdata_o)
+    )
 
 
 endmodule //top
