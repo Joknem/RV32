@@ -9,7 +9,7 @@ module gpio (
     input   wire    [1:0]               io_pin_i                                    ,                   
     output  wire    [`REG_BUS]          reg_ctrl_o                                  ,                   
     output  wire    [`REG_BUS]          reg_data_o                                  ,                   
-    output  reg     [`REG_BUS]          data_o                                      ,                   
+    output  reg     [`REG_BUS]          data_o                                                          
 );
 
     localparam  GPIO_CTRL           =               4                           'h0;    

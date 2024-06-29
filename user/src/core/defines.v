@@ -33,12 +33,18 @@
 `define         HOLD_IF         3'b010          
 `define         HOLD_ID         3'b011          
 
+//bus
+`define         BUS_REQ         1'b1            
+`define         BUS_NREQ        1'b0            
+`define         HOLD_ENABLE     1'b1            
+`define         HOLD_DISABLE    1'b0            
+
 
 `define         INST_NOP        32'h00000013    
 //GPIO
-`define         OUTPUT          2'01            
-`define         INPUT           2'10            
-`define         HIGH_INPEDANCE  2'00            
+`define         OUTPUT          2'b01            
+`define         INPUT           2'b10            
+`define         HIGH_INPEDANCE  2'b00            
 
 //I type instructions
 `define         INST_TYPE_I     7'b0010011      

@@ -25,10 +25,11 @@ module ex(
     output  wire    [`REG_BUS]          reg_wdata_o                                 ,                   
 
     //to mem
-    output  reg                         mem_we_o                                    ,                   
     output  reg     [`MEM_ADDR_BUS]     mem_raddr_o                                 ,                   
     output  reg     [`MEM_ADDR_BUS]     mem_waddr_o                                 ,                   
     output  reg     [`MEM_BUS]          mem_wdata_o                                 ,                   
+    output  reg                         mem_we_o                                    ,                   
+    output  reg                         mem_req_o                                   ,                   
 
     //to pc_reg
     output  reg                         jump_flag_o                                 ,                   
@@ -61,6 +62,7 @@ module ex(
         reg_we = reg_we_i;
         reg_waddr = reg_waddr_i;
         jump_addr_o = `ZERO_WORD;
+        mem_req_o = `BUS_NREQ;
         case(opcode)
             `INST_TYPE_I:begin
                 mem_we_o = `WRITE_DISABLE;
@@ -145,6 +147,7 @@ module ex(
             end
             `INST_TYPE_L:begin
                 mem_we_o = `WRITE_DISABLE;
+                mem_req_o = `BUS_REQ;
                 mem_wdata_o = `ZERO_WORD;
                 mem_waddr_o = `ZERO_WORD;
                 mem_raddr_o = op1_add_op2;
@@ -172,6 +175,7 @@ module ex(
             end
             `INST_TYPE_S:begin
                 mem_we_o = `WRITE_ENABLE;
+                mem_req_o = `BUS_REQ;
                 mem_waddr_o = op1_add_op2;
                 mem_raddr_o = op1_add_op2;
                 reg_wdata = `ZERO_WORD;

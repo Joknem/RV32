@@ -5,6 +5,6 @@ int main() {
     int b = 2;
     int c = a + b;
     if(c == 3)
-        return 1;
+        return 5;
     return 0;
 }

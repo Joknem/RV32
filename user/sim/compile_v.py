@@ -22,6 +22,8 @@ def clean_include(path):
 
 def compile(path):
     iverilog_cmd = ['iverilog', '-o', 'a.out', path + '/sim/top.v']
+    for i in iverilog_cmd:
+        print(i, end=' ')
     process = subprocess.Popen(iverilog_cmd)
     process.wait()
 
