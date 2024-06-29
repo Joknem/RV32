@@ -5,8 +5,10 @@ C_SOURCE := $(shell find . -name *.c)
 ASM_SOURCE += $(shell find . -name *.S)
 ASM_OBJECT := $(patsubst %.s,%.o, $(patsubst %.S,%.o,$(ASM_SOURCE)))
 C_OBJECT := $(patsubst %.c,%.o,$(C_SOURCE))
+INC_PATH := inc
 CC := $(CC_PREFIX)gcc
 C_FLAGS := -nostdlib -march=rv32i -mabi=ilp32 -c
+C_FLAGS += -I$(INC_PATH)
 C_FLAGS += -DSIM
 LD_FLAGS := -m elf32lriscv -T link.ld
 DUMP_FLAGS := -D -j .text -j .init
