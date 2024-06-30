@@ -46,8 +46,8 @@ module bus(
     parameter   slave2              =               4                           'b0010; 
     parameter   slave3              =               4                           'b0011; 
 
-    localparam grant0 = 1'b0;
-    localparam grant1 = 1'b1;
+    localparam  grant0              =               1                           'b0;    
+    localparam  grant1              =               1                           'b1;    
 
     reg                                 grant                                       ;                               
     always @(*) begin

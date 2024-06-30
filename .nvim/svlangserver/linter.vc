@@ -1,8 +1,10 @@
 +incdir+/home/joknem/Data/workspace/joknem_rv32/user/sim
 +incdir+/home/joknem/Data/workspace/joknem_rv32/user/src/core
 +incdir+/home/joknem/Data/workspace/joknem_rv32/user/src/peripherals
++incdir+/home/joknem/Data/workspace/joknem_rv32/user/src/soc
 +incdir+/home/joknem/Data/workspace/joknem_rv32/user/src/utils
 +incdir+/home/joknem/Data/workspace/joknem_rv32/user/sim
 +incdir+/home/joknem/Data/workspace/joknem_rv32/user/src/core
 +incdir+/home/joknem/Data/workspace/joknem_rv32/user/src/peripherals
++incdir+/home/joknem/Data/workspace/joknem_rv32/user/src/soc
 +incdir+/home/joknem/Data/workspace/joknem_rv32/user/src/utils

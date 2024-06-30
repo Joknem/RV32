@@ -32,8 +32,10 @@ module riscv_soc(
     wire    [`MEM_BUS]                  bus_s2_rdata_i                              ;                               
     wire                                bus_hold_flag_o                             ;                               
 
-    reg     [`MEM_ADDR_BUS]             start_i                                     ;                               
-    wire    [`MEM_ADDR_BUS]             pc_o                                        ;                               
+    //gpio
+    wire    [`IO_NUM_BUS]               io_pin                                      ;                               
+    wire    [`REG_BUS]                  gpio_ctrl                                   ;                               
+    wire    [`REG_BUS]                  gpio_data                                   ;                               
 
     core core_inst(
         .clk(clk),
@@ -91,13 +93,15 @@ module riscv_soc(
     );
 
     //BUG: fix this
-    // gpio gpio_inst(
-    //     .clk(clk),
-    //     .rst(rst),
-    //     .we_i(bus_s2_we_o),
-    //     .wdata_i(ex_mem_wdata_o),
-    //     .waddr_i(ex_mem_waddr_o),
-    //     .raddr_i(ex_mem_raddr_o),
-    //     .rdata_o(ram_rdata_o)
-    // );
+    gpio gpio_inst(
+        .clk(clk),
+        .rst(rst),
+        .we_i(bus_s2_we_o),
+        .addr_i(bus_s2_addr_o),
+        .wdata_i(bus_s2_wdata_o),
+        .rdata_o(bus_s2_rdata_i),
+        .io_pin_i(io_pin),
+        .reg_ctrl_o(gpio_ctrl),
+        .reg_data_o(gpio_data)
+    );
 endmodule

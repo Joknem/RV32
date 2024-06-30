@@ -33,7 +33,7 @@ module top();
     end
 
     initial begin
-        #5000 $finish;
+        #50000 $finish;
         // `ifdef TEST_PROG
         //         wait(x26 == 32'b1)   // wait sim end, when x26 == 1
         //         #100

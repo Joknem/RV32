@@ -5,11 +5,11 @@ module gpio (
     input   wire                        rst                                         ,                   
     input   wire                        we_i                                        ,                   
     input   wire    [`MEM_ADDR_BUS]     addr_i                                      ,                   
-    input   wire    [`MEM_BUS]          data_i                                      ,                   
-    input   wire    [1:0]               io_pin_i                                    ,                   
+    input   wire    [`MEM_BUS]          wdata_i                                     ,                   
+    output  reg     [`REG_BUS]          rdata_o                                     ,                   
+    input   wire    [`IO_NUM_BUS]       io_pin_i                                    ,                   
     output  wire    [`REG_BUS]          reg_ctrl_o                                  ,                   
-    output  wire    [`REG_BUS]          reg_data_o                                  ,                   
-    output  reg     [`REG_BUS]          data_o                                                          
+    output  wire    [`REG_BUS]          reg_data_o                                                      
 );
 
     localparam  GPIO_CTRL           =               4                           'h0;    
@@ -31,10 +31,10 @@ always @(posedge clk)begin
         if(we_i == `WRITE_ENABLE)begin
             case(addr_i[3:0])
                 GPIO_CTRL:begin
-                    gpio_ctrl <= data_i;
+                    gpio_ctrl <= wdata_i;
                 end
                 GPIO_DATA:begin
-                    gpio_data <= data_i;
+                    gpio_data <= wdata_i;
                 end
                 default:begin
                     gpio_ctrl = `ZERO_WORD;
@@ -55,19 +55,19 @@ end
 //read gpio reg
 always @(*)begin
     if(rst == `RSTN)begin
-        data_o = `ZERO_WORD;
-        data_o = `ZERO_WORD;
+        rdata_o = `ZERO_WORD;
+        rdata_o = `ZERO_WORD;
     end
     else begin
         case(addr_i[3:0])
             GPIO_CTRL:begin
-                data_o = gpio_ctrl;
+                rdata_o = gpio_ctrl;
             end
             GPIO_DATA:begin
-                data_o = gpio_data;
+                rdata_o = gpio_data;
             end
             default:begin
-                data_o = `ZERO_WORD;
+                rdata_o = `ZERO_WORD;
             end
         endcase
     end
