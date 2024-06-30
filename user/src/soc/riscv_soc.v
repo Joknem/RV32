@@ -1,7 +1,7 @@
 `include "../core/core.v"
-`include "../core/peripherals/ram.v"
-`include "../core/peripherals/rom.v"
-`include "../core/peripherals/gpio.v"
+`include "../peripherals/ram.v"
+`include "../peripherals/rom.v"
+`include "../peripherals/gpio.v"
 `include "../core/defines.v"
 
 module riscv_soc(

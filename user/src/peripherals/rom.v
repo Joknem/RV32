@@ -9,7 +9,10 @@ module rom(
     reg     [`BYTE_BUS]                 _rom                        [`ROM_SIZE-1:0] ;                               
     reg     [7:0]                       i                                           ;                               
     initial begin
-        $readmemh("/home/joknem/workspace/joknem_rv32/user/data/main.mem", _rom, 0, `ROM_SIZE - 1);
+        //NOTE: path only for mac
+        $readmemh("/Users/joknem/Desktop/workspace/neo_fpga_learn/joknem_rv32/user/data/main.mem", _rom, 0, `ROM_SIZE - 1);
+        //NOTE: path only for ubuntu
+        // $readmemh("/home/joknem/workspace/joknem_rv32/user/data/main.mem", _rom, 0, `ROM_SIZE - 1);
     end
     always @(*)begin
         if(rst == `RST)begin

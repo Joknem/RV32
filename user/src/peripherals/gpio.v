@@ -24,8 +24,8 @@ module gpio (
 //write gpio reg
 always @(posedge clk)begin
     if(rst == `RSTN)begin
-        gpio_ctrl = `ZERO_WORD;
-        gpio_data = `ZERO_WORD;
+        gpio_ctrl <= `ZERO_WORD;
+        gpio_data <= `ZERO_WORD;
     end
     else begin
         if(we_i == `WRITE_ENABLE)begin
@@ -37,8 +37,8 @@ always @(posedge clk)begin
                     gpio_data <= wdata_i;
                 end
                 default:begin
-                    gpio_ctrl = `ZERO_WORD;
-                    gpio_data = `ZERO_WORD;
+                    gpio_ctrl <= `ZERO_WORD;
+                    gpio_data <= `ZERO_WORD;
                 end
             endcase
         end

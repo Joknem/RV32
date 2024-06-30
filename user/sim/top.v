@@ -22,7 +22,7 @@ module top();
         .clk(clk),
         .rst(rst)
     );
-    always #10 clk = ~clk;
+    always #1 clk = ~clk;
     initial begin
         $dumpfile("./wave.vcd");
         $dumpvars(0, riscv_soc_inst);
@@ -33,7 +33,7 @@ module top();
     end
 
     initial begin
-        #50000 $finish;
+        #5000 $finish;
         // `ifdef TEST_PROG
         //         wait(x26 == 32'b1)   // wait sim end, when x26 == 1
         //         #100
