@@ -6,10 +6,12 @@ module ram (
     input   wire                        we_i                                        ,                   
     input   wire    [`MEM_BUS]          wdata_i                                     ,                   
     input   wire    [`MEM_ADDR_BUS]     addr_i                                      ,                   
+    output  reg     [`MEM_BUS]          rdata_o                                                         ,
     //tests below
-    output  reg     [`MEM_BUS]          rdata_o                                                         
+    output wire [`MEM_BUS] ram_20000000
 );
     reg     [`MEM_BUS]                  ram                         [0:`MEM_SIZE-1] ;                               
+    assign ram_20000000 = ram[32'h00000000];
     initial begin : ram_init
         integer i;
         for(i = 0; i < `MEM_SIZE; i++) begin

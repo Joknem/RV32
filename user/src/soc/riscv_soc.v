@@ -36,6 +36,8 @@ module riscv_soc(
     wire    [`IO_NUM_BUS]               io_pin                                      ;                               
     wire    [`REG_BUS]                  gpio_ctrl                                   ;                               
     wire    [`REG_BUS]                  gpio_data                                   ;                               
+    //ram
+    wire [`MEM_BUS] ram_test;
 
     core core_inst(
         .clk(clk),
@@ -89,7 +91,8 @@ module riscv_soc(
         .we_i(bus_s1_we_o),
         .wdata_i(bus_s1_wdata_o),
         .addr_i(bus_s1_addr_o),
-        .rdata_o(bus_s1_rdata_i)
+        .rdata_o(bus_s1_rdata_i),
+        .ram_20000000(ram_test)
     );
 
     //BUG: fix this

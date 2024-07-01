@@ -35,7 +35,7 @@ module ex(
     output  reg                         jump_flag_o                                 ,                   
     output  reg     [`MEM_ADDR_BUS]     jump_addr_o                                 ,                   
 
-    output  reg     [`HOLD_FLAG_BUS]    hold_flag_o                                                     
+    output  reg      hold_flag_o                                                     
 );
     wire    [`OPCODE_BUS]               opcode                                      ;                               
     wire    [`FUNCT7_BUS]               funct7                                      ;                               
@@ -70,7 +70,7 @@ module ex(
                 mem_waddr_o = `ZERO_WORD;
                 mem_raddr_o = `ZERO_WORD;
                 jump_flag_o = `JUMP_NO;
-                hold_flag_o = `HOLD_NONE;
+                hold_flag_o = `HOLD_DISABLE;
                 case(funct3)
                     `INST_ADDI:begin
                             reg_wdata = op1_add_op2;
@@ -110,7 +110,7 @@ module ex(
                 mem_waddr_o = `ZERO_WORD;
                 mem_raddr_o = `ZERO_WORD;
                 jump_flag_o = `JUMP_NO;
-                hold_flag_o = `HOLD_NONE;
+                hold_flag_o = `HOLD_DISABLE;
                 case(funct3)
                     `INST_ADD:begin
                         if(inst_i[30] == 1'b1)begin
@@ -152,7 +152,7 @@ module ex(
                 mem_waddr_o = `ZERO_WORD;
                 mem_raddr_o = op1_add_op2;
                 jump_flag_o = `JUMP_NO;
-                hold_flag_o = `HOLD_NONE;
+                hold_flag_o = `HOLD_DISABLE;
                 case(funct3)
                     `INST_LB:begin
                         reg_wdata = {{24{mem_rdata_i[7]}}, mem_rdata_i[7:0]};
@@ -180,7 +180,7 @@ module ex(
                 mem_raddr_o = op1_add_op2;
                 reg_wdata = `ZERO_WORD;
                 jump_flag_o = `JUMP_NO;
-                hold_flag_o = `HOLD_NONE;
+                hold_flag_o = `HOLD_DISABLE;
                 case(funct3)
                     `INST_SB:begin
                         mem_wdata_o = {mem_rdata_i[31:8], reg2_rdata_i[7:0]};
@@ -199,42 +199,35 @@ module ex(
                 mem_we_o = `WRITE_DISABLE;
                 reg_wdata = `ZERO_WORD;
                 reg_we = `WRITE_DISABLE;
-                hold_flag_o = `HOLD_NONE;
+                hold_flag_o = `HOLD_DISABLE;
                 case(funct3)
                     `INST_BEQ:begin
                         jump_flag_o = (op1_i == op2_i);
-                        hold_flag_o = {3{jump_flag_o}} & `HOLD_ID;
                         jump_addr_o = {32{jump_flag_o}} & op1_jump_add_op2_jump;
                     end   
                     `INST_BNE:begin
                         jump_flag_o = (op1_i != op2_i);
-                        hold_flag_o = {3{jump_flag_o}} & `HOLD_ID;
                         jump_addr_o = {32{jump_flag_o}} & op1_jump_add_op2_jump;
                     end   
                     `INST_BLT:begin
                         jump_flag_o = (op1_i < op2_i);
-                        hold_flag_o = {3{jump_flag_o}} & `HOLD_ID;
                         jump_addr_o = {32{jump_flag_o}} & op1_jump_add_op2_jump;
                     end
                     `INST_BGE:begin
                         jump_flag_o = (op1_i >= op2_i);
-                        hold_flag_o = {3{jump_flag_o}} & `HOLD_ID;
                         jump_addr_o = {32{jump_flag_o}} & op1_jump_add_op2_jump;
                     end
                     `INST_BLTU:begin
                         jump_flag_o = ($unsigned(op1_i) < $unsigned(op2_i));
-                        hold_flag_o = {3{jump_flag_o}} & `HOLD_ID;
                         jump_addr_o = {32{jump_flag_o}} & op1_jump_add_op2_jump;
                     end
                     `INST_BGEU:begin
                         jump_flag_o = ($unsigned(op1_i) >= $unsigned(op2_i));
-                        hold_flag_o = {3{jump_flag_o}} & `HOLD_ID;
                         jump_addr_o = {32{jump_flag_o}} & op1_jump_add_op2_jump;
                     end
                     default:begin
                         jump_flag_o = `JUMP_NO;
                         jump_addr_o = `ZERO_WORD;
-                        hold_flag_o = `HOLD_NONE;
                     end
                 endcase
             end
@@ -246,7 +239,7 @@ module ex(
                 reg_wdata = op1_add_op2;
                 jump_flag_o = `JUMP_YES;
                 jump_addr_o = op1_jump_add_op2_jump;
-                hold_flag_o = `HOLD_ID;
+                hold_flag_o = `HOLD_DISABLE;
             end
             `INST_JALR:begin
                 mem_we_o = `WRITE_DISABLE;
@@ -256,7 +249,7 @@ module ex(
                 reg_wdata = op1_add_op2;
                 jump_flag_o = `JUMP_YES;
                 jump_addr_o = op1_jump_add_op2_jump;
-                hold_flag_o = `HOLD_ID;
+                hold_flag_o = `HOLD_DISABLE;
             end
             `INST_LUI, `INST_AUIPC:begin
                 mem_we_o = `WRITE_DISABLE;
@@ -266,7 +259,7 @@ module ex(
                 reg_wdata = op1_add_op2;
                 jump_flag_o = `JUMP_NO;
                 jump_addr_o = `ZERO_WORD;
-                hold_flag_o = `HOLD_NONE;
+                hold_flag_o = `HOLD_DISABLE;
             end
             `INST_NOP_OP:begin
                 mem_we_o = `WRITE_DISABLE;
@@ -276,7 +269,7 @@ module ex(
                 reg_wdata = `ZERO_WORD;
                 jump_flag_o = `JUMP_NO;
                 jump_addr_o = `ZERO_WORD;
-                hold_flag_o = `HOLD_NONE;
+                hold_flag_o = `HOLD_DISABLE;
             end
             default:begin
                 mem_we_o = `WRITE_DISABLE;
@@ -286,7 +279,7 @@ module ex(
                 reg_wdata = `ZERO_WORD;
                 jump_flag_o = `JUMP_NO;
                 jump_addr_o = `ZERO_WORD;
-                hold_flag_o = `HOLD_NONE;
+                hold_flag_o = `HOLD_DISABLE;
             end
         endcase
     end

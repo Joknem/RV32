@@ -95,7 +95,6 @@ module core(
     assign rom_inst_o = pc_data_i;
     //ram module
 
-
     pc_reg pc_reg_inst(
         .clk(clk),
         .rst(rst),
